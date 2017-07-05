@@ -9,25 +9,32 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
-        if (args.Length != 1)
+        /*if (args.Length != 1)
         {
             Console.WriteLine("Usage: gfn.exe program.gfn");
             return;
-        }
+        }*/
 
         var path = args[0];
         var moduleName = Path.GetFileNameWithoutExtension(path) + ".exe";
 
         Scanner scanner;
-        using (TextReader input = File.OpenText(path))
+        using (TextReader input = File.OpenText("./jpt_script.txt"))
         {
             scanner = new Scanner(input);
         }
+
+		Console.WriteLine("SCANNER DONE");
+
         var parser = new Parser(scanner.Tokens);
         parser.Parse();
+
+		Console.WriteLine("PARSER DONE");
 
         var codeGen = new CodeGen(parser.Result, moduleName);
         codeGen.Compile();
         Console.WriteLine("Successfully compiled to " + moduleName);
+
+		Console.ReadLine();
     }
 }

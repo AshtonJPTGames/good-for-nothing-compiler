@@ -16,7 +16,7 @@ public sealed class Parser
 
     public void Parse()
     {
-        _result = ParseNextStmt();
+		_result = ParseNextStmt();
 
         if (_index != _tokens.Count)
             throw new Exception("expected EOF");
@@ -36,14 +36,32 @@ public sealed class Parser
             throw new Exception("expected statement, got EOF");
         }
 
-        if (_tokens[_index].Equals("print"))
-        {
-            result = ParsePrint();
-        }
-        else if (_tokens[_index].Equals("var"))
-        {
-            result = ParseVar();
-        }
+		if (_tokens[_index].Equals("Class"))
+		{
+			result = ParseClass();
+			Console.WriteLine("JKL");
+			//--_index;
+		}
+		/*else if (_tokens[_index].Equals("print"))
+		{
+			result = ParsePrint();
+		}*/
+		/*else if (_tokens[_index].Equals("var"))
+		{
+			result = ParseVar();
+		}*/
+		/*else if (_tokens[_index].Equals("Integer"))
+		{
+			Console.WriteLine("PQR");
+			result = ParseVar();
+		}*/
+		/*else if (_tokens[_index].Equals("Float"))
+		{
+			result = ParseVar();   		}
+		else if (_tokens[_index].Equals("Boolean"))
+		{
+			result = ParseVar();
+		}
         else if (_tokens[_index].Equals("read_int"))
         {
             result = ParseReadInt();
@@ -59,25 +77,28 @@ public sealed class Parser
         else if (_tokens[_index] is string) // variable assignment
         {
             result = ParseAssignment();
-        }
+        }*/
         else
         {
-            throw new Exception("parse error at token " + _index + ": " + _tokens[_index]);
+			Console.WriteLine("MOFUGGA: {0}", _tokens[_index].ToString());
+			result = null;
+            //throw new Exception("parse error at token " + _index + ": " + _tokens[_index]);
         }
 
         _index++;
+		Console.WriteLine("MNO");
 
 
         if (_index >= _tokens.Count)    // no more to parse
             return result;
 
-        if (_tokens[_index].Equals("end")) // end of for-loop NOTE: Can this be moved closer to the "for" part above?
-            return result;
+        /*if (_tokens[_index].Equals("end")) // end of for-loop NOTE: Can this be moved closer to the "for" part above?
+            return result;*/
 
         return new Sequence { First = result, Second = ParseNextStmt() };
     }
 
-    private Stmt ParseAssignment()
+	/*private Stmt ParseAssignment()
     {
         var ident = (string)_tokens[_index++];
 
@@ -88,9 +109,9 @@ public sealed class Parser
         _index++;
 
         return new Assign { Ident = ident, Expr = ParseExpr() };
-    }
+    }*/
 
-    private Stmt ParseForLoop()
+	/*private Stmt ParseForLoop()
     {
         _index++;
         var forLoop = new ForLoop();
@@ -133,9 +154,9 @@ public sealed class Parser
         _index++;
 
         return forLoop;
-    }
+    }*/
 
-    private Stmt ParseReadString()
+	/*private Stmt ParseReadString()
     {
         _index++;
 
@@ -143,9 +164,9 @@ public sealed class Parser
             throw new Exception("expected variable name after 'read_string'");
 
         return new ReadString((string)_tokens[_index++]);
-    }
+    }*/
 
-    private Stmt ParseReadInt()
+	/*private Stmt ParseReadInt()
     {
         _index++;
 
@@ -153,7 +174,148 @@ public sealed class Parser
             throw new Exception("expected variable name after 'read_int'");
 
         return new ReadInt((string)_tokens[_index++]);
-    }
+    }*/
+
+	private Stmt ParseClass()
+	{
+		// Skip the "Class" keyword.
+		NextToken();
+
+		// Get class name.
+		ExpectTokenType(typeof(string), 0);
+		string className = (string)CurrentToken();
+		NextToken();
+
+		// Get left bracket.
+		ExpectToken(Scanner.ArithToken.LeftBracket, 0);
+		NextToken();
+
+		IList<Stmt> classBody = new List<Stmt>();
+
+		Console.WriteLine("ABC");
+		// Get class body.
+		while (!ExpectToken(Scanner.ArithToken.RightBracket, 0))
+		{
+			Console.WriteLine("0");
+			if (CurrentToken().Equals("Integer"))
+			{
+				Console.WriteLine("1");
+				// Skip "Integer" keyword.
+                NextToken();
+				Console.WriteLine("2");
+
+				// Get variable name.
+				ExpectTokenType(typeof(string), 0);
+				string variableName = (string)CurrentToken();
+                NextToken();
+				Console.WriteLine("3");
+
+				// Get "=".
+				ExpectToken(Scanner.ArithToken.Equal, 3);
+                NextToken();
+				Console.WriteLine("4");
+
+				// Get right-hand expression.
+				Expr expression = ParseExpr();
+				Console.WriteLine("5");
+
+				NextToken();
+
+				classBody.Add(new DeclareVar(variableName, expression));
+				Console.WriteLine("6");
+			}
+		}
+		Console.WriteLine("DEF");
+
+		// Get right bracket.
+		ExpectToken(Scanner.ArithToken.RightBracket, 0);
+		NextToken();
+
+		Console.WriteLine("GHI");
+
+		return new ClassDefinition(className, classBody);
+	}
+
+	private Stmt ParseVar()
+	{
+		Console.WriteLine("PARSEVAR");
+		_index++;
+
+		if (_index >= _tokens.Count || !(_tokens[_index] is string))
+			throw new Exception("expected variable name after 'var'");
+
+		var ident = (string)_tokens[_index];
+
+		_index++;
+
+		if (_index == _tokens.Count ||
+			(Scanner.ArithToken)_tokens[_index] != Scanner.ArithToken.Equal)
+			throw new Exception(string.Format("expected = after 'var {0}'", ident));
+
+		_index++;
+
+		var expr = ParseExpr();
+		return new DeclareVar(ident, expr);	 }
+
+	private bool ExpectToken(object expectedToken, int errorType)
+	{
+		if (!NoMoreTokens() || CurrentTokenMatches(expectedToken)) { return true; }
+
+		switch (errorType)
+		{
+			case 0:
+				Console.WriteLine("ExpectTokenType_Error: Expected name after 'Class' keyword.");
+				break;
+			case 1:
+				Console.WriteLine("ExpectTokenType_Expected '}' after class definition.");
+				break;
+			default:
+				Console.WriteLine("ExpectTokenType_Error: Unexpected error. :(");
+				break;
+		}
+
+		return false;
+	}
+
+	private void ExpectTokenType(Type expectedType, int errorType)
+	{
+		if (!NoMoreTokens() || TokenIsType(CurrentToken(), expectedType)) { return; }
+
+		switch (errorType)
+		{
+			case 0:
+				Console.WriteLine("ExpectTokenType_Error: Expected name after 'Class' keyword.");
+				break;
+			default:
+				Console.WriteLine("ExpectTokenType_Error: Unexpected error. :(");
+				break;
+		}
+	}
+
+	private void NextToken()
+	{
+		++_index;
+	}
+
+	private object CurrentToken()
+	{
+		return _tokens[_index];
+	}
+
+	private bool TokenIsType(object token, Type t)
+	{
+		return token.GetType().Equals(t);
+	}
+
+	private bool NoMoreTokens()
+	{
+		return _index >= _tokens.Count;
+	}
+
+	private bool CurrentTokenMatches(object o)
+	{
+		return CurrentToken().Equals(o);
+	}
 
     private Stmt ParsePrint()
     {
@@ -161,29 +323,9 @@ public sealed class Parser
         return new Print(ParseExpr());
     }
 
-    private Stmt ParseVar()
-    {
-        _index++;
-
-        if (_index >= _tokens.Count || !(_tokens[_index] is string))
-            throw new Exception("expected variable name after 'var'");
-
-        var ident = (string)_tokens[_index];
-
-        _index++;
-
-        if (_index == _tokens.Count ||
-            (Scanner.ArithToken)_tokens[_index] != Scanner.ArithToken.Equal)
-            throw new Exception(string.Format("expected = after 'var {0}'", ident));
-
-        _index++;
-
-        var expr = ParseExpr();
-        return new DeclareVar(ident, expr);
-    }
-
     private Expr ParseExpr()
     {
+		Console.WriteLine("PARSEEXPR");
         if (_index == _tokens.Count) throw new Exception("expected expression, got EOF");
 
         var nexttoken = _tokens[_index + 1];
@@ -198,7 +340,10 @@ public sealed class Parser
             return ParseSimpleExpr();
         }
 
-        var binexpr = new ArithExpr();
+		// MY SOLUTION
+		return null;
+
+        /*var binexpr = new ArithExpr();
         switch ((Scanner.ArithToken)nexttoken)
         {
             case Scanner.ArithToken.Add:
@@ -217,20 +362,21 @@ public sealed class Parser
         binexpr.Left = ParseSimpleExpr();
         _index++;
         binexpr.Right = ParseExpr();
-        return binexpr;
+        return binexpr;*/
     }
 
     private Expr ParseSimpleExpr()
     {
+		Console.WriteLine("PARSESIMPLEEXPR");
         if (_index == _tokens.Count)
             throw new Exception("expected expression, got EOF");
 
-        if (_tokens[_index] is StringBuilder)
+        /*if (_tokens[_index] is StringBuilder)
         {
             var value = _tokens[_index++].ToString();
             var stringLiteral = new StringLiteral(value);
             return stringLiteral;
-        }
+        }*/
 
         if (_tokens[_index] is int)
         {

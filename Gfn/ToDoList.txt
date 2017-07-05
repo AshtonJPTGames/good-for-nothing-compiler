@@ -1,0 +1,13 @@
+﻿[x] Minimise code-base so the language only accepts "Integer x = 4;" and "Print x;"
+	[x] Minimise Scanner
+	[x] Minimise Parser
+	[x] Minimise AST
+	[x] Minimise CodeGen
+
+[ ] Rewrite Compiler for organisation and re-useability.
+	[ ] Rewrite Program
+	[ ] Rewrite Scanner as Lexer containing a Scanner and Tokeniser.
+	[ ] Rewrite Parser
+	[ ] Rewrite AST
+	[ ] Rewrite CodeGen
+	[ ] Add Language class for language specifications.

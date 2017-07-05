@@ -1,29 +1,36 @@
 using System;
-using System.IO;
-using System.Text;
-using Collections = System.Collections.Generic;
+using System.Collections.Generic; // IList, List.
+using System.IO; // TextReader.
+using System.Text; // StringBuilder.
 
 public sealed class Scanner
 {
     public enum ArithToken
     {
-        Add,
-        Sub,
-        Mul,
-        Div,
-        Semi,
+        //Add,
+        //Sub,
+        //Mul,
+        //Div,
         Equal,
+        Semi,
+		LeftBracket,
+		RightBracket
     }
 
-    private readonly Collections.IList<object> _result;
+    private readonly IList<object> _result;
 
     public Scanner(TextReader input)
     {
-        _result = new Collections.List<object>();
+        _result = new List<object>();
         Scan(input);
+
+		foreach (object o in _result)
+		{
+			Console.WriteLine("--> {0}", o.ToString());
+		}
     }
 
-    public Collections.IList<object> Tokens
+    public IList<object> Tokens
     {
         get { return _result; }
     }
@@ -39,16 +46,16 @@ public sealed class Scanner
                 // eat the current char and skip ahead!
                 input.Read();
             }
-            else if (char.IsLetter(ch) || ch == '_')
+            else if (char.IsLetter(ch)/* || ch == '_'*/)
             {
                 // keyword or identifier
                 ScanIdent(input, ch);
             }
-            else if (ch == '"')
+            /*else if (ch == '"')
             {
                 // string literal
                 ScanString(input);
-            }
+            }*/
             else if (char.IsDigit(ch))
             {
                 // numeric literal
@@ -71,7 +78,7 @@ public sealed class Scanner
     {
         switch (ch)
         {
-            case '+':
+            /*case '+':
                 input.Read();
                 _result.Add(ArithToken.Add);
                 break;
@@ -86,11 +93,19 @@ public sealed class Scanner
             case '/':
                 input.Read();
                 _result.Add(ArithToken.Div);
-                break;
+                break;*/
             case '=':
                 input.Read();
                 _result.Add(ArithToken.Equal);
                 break;
+			case '{':
+				input.Read();
+				_result.Add(ArithToken.LeftBracket);
+				break;
+			case '}':
+				input.Read();
+				_result.Add(ArithToken.RightBracket);
+				break;
             default:
                 throw new Exception("Scanner encountered unrecognized character '" + ch + "'");
         }
@@ -121,7 +136,7 @@ public sealed class Scanner
         _result.Add(int.Parse(accum.ToString()));
     }
 
-    private void ScanString(TextReader input)
+    /*private void ScanString(TextReader input)
     {
         char ch;
         var accum = new StringBuilder();
@@ -147,7 +162,7 @@ public sealed class Scanner
         // skip the terminating "
         input.Read();
         _result.Add(accum);
-    }
+    }*/
 
     private void ScanIdent(TextReader input, char ch)
     {

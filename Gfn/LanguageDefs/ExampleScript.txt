@@ -1,0 +1,15 @@
+﻿// Standard variable types.
+Integer myInt     = 10;
+Float   myFloat   = 10.0f;
+Boolean myBoolean = True;
+
+// Simple loop.
+Loop(i = 0, 10, 1) {
+	Print(i);
+}
+
+// Another loop.
+While(x > 10) {
+	Print(x);
+	x = x - 1;
+}

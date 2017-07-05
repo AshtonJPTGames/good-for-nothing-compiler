@@ -66,6 +66,8 @@
   <ItemGroup>
     <None Include="samples\helloworld.gfn" />
     <None Include="samples\loop.gfn" />
+    <None Include="LanguageDefs\ExampleScript.txt" />
+    <None Include="ToDoList.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

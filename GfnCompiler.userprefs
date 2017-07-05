@@ -1,0 +1,18 @@
+﻿<Properties StartupConfiguration="{3FFA9F97-91E9-451D-A8CC-4B63A9A0CFFD}|Default">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Gfn\Scanner.cs">
+    <Files>
+      <File FileName="Gfn\Program.cs" Line="16" Column="12" />
+      <File FileName="Gfn\Scanner.cs" Line="82" Column="30" />
+      <File FileName="Gfn\Parser.cs" Line="31" Column="6" />
+      <File FileName="Gfn\Ast.cs" Line="16" Column="20" />
+      <File FileName="Gfn\CodeGen.cs" Line="55" Column="29" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.GfnCompiler PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>
